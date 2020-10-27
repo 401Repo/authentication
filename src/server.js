@@ -10,13 +10,11 @@
 //     __|||__
 //jgs ((__|__))
 
-// dependencies
-
+// things i need
 const express = require('express');
 const app = express();
 
 // error pages and logger
-
 const notFound = require('./middleware/404.js');
 const serverError = require('./middleware/500s.js');
 const loggingMiddleware = require('./middleware/logger.js');
@@ -30,7 +28,7 @@ app.use(loggingMiddleware);
 app.use(timeStamp);
 
 // routes
-
+// only sign in and log in
 const oneRouter = require('./auth/routes/router.js');
 app.use('/api/v1', oneRouter);
 
@@ -45,7 +43,6 @@ function start(PORT){
 
 module.exports = {
   start: start,
-
   app
 }
 
