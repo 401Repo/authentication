@@ -20,20 +20,15 @@ Also, in signing in, we get a need to decript and validate a password to a hashe
 
 ### TDD
 
-#####  tests the product controller and data layer
+#####  My test so far:
   
   Testing using Supergoose atm:
   
--    ✓ should return a new product "Candy" on POST /product (41 ms)
--    ✓ should return 1 product by id (13 ms)
--    ✓ should update a new product "Candy" to "Cookies" on Put /product (8 ms)
--    ✓ should return a new category "Electronics" on POST /category (4 ms)
--    ✓ should return 1 category by id (3 ms)
--    ✓ should be able 404 err message (2 ms)
--    ✓ Testing 500 error (1 ms)
--    ✓ should update a new category "Electronics" to "Coputers" 
--    ✓ should delete 1 category by id (5 ms)
--    ✓ should delete 1 product by id (4 ms)
+ -   ✓ lets use signup to create a new user. (64 ms)
+ -   ✓ signin will login as a user (38 ms)
+ -   ✓ A bad route will give me an error (4 ms)
+ -   ✓ error when the signup route is hit with a bad input (9 ms)
+ -   ✓ no input hits my 500 error
 
 
 
