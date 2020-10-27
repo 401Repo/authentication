@@ -12,7 +12,7 @@ Aditional instruction srequire that we save a nique username, and also hash pasw
 
 ### UML
 
-![UML](https://github.com/401Repo/expressRouter/blob/main/UML.jpg?raw=true)
+![UML](https://github.com/401Repo/authentication/blob/main/Image%20from%20iOS%20(1).jpg)
 
 The UML shows that we need to navigate these routes or we will get an error. Also, the router needs to have a authentication middleware, and on signing up the schema calls for a unique name (as in not already in the db) or we will get an error.
 
