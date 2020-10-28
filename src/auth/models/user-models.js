@@ -34,6 +34,10 @@ users.methods.getToken = function () {
   return token;
 };
 
+
+
+
+
 users.statics.validation = async function (usr, pass) {
 
     console.log('at validation');
@@ -68,6 +72,34 @@ users.statics.validation = async function (usr, pass) {
   };
 
 };
+
+users.statics.bearValidation = async function (userToPull) {
+
+  console.log(userToPull, ' at bear validation');
+
+// need to capitalize: I DONT KNOW WHY it it wont just work as is.
+
+userToPull = userToPull.charAt(0).toUpperCase()+userToPull.slice(1);
+  console.log('user passed in at bear 83: ', userToPull);
+
+  // we make sure user exist, and if it does we need's it info... wich is why i needs
+  //to be aunique name in our mongo
+const user = await this.findOne({ username: userToPull });
+console.log({user});
+
+//   console.log('lets try to salt the pass:');
+
+// console.log('this is the password from user: ', user.password);
+
+  return user;
+
+
+};
+
+
+
+
+
 
 module.exports = mongoose.model('users', users);
 

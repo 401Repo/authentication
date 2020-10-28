@@ -15,6 +15,7 @@
 const express = require('express');
 const User = require('../models/user-models.js');
 const basicAuth = require('../middleware2/basic-auth.js');
+const bearAuth = require('../middleware2/bearer.js');
 const oneRouter = express.Router();
 
 //      .-=-.) > Im not a duck but i think:
@@ -104,6 +105,40 @@ oneRouter.post('/signin', basicAuth, async function (req, res, next) {
   };
 
 });
+
+
+
+oneRouter.get('/secret', bearAuth, async function (req, res, next) {
+
+  // I have to go to basicAuth before landing here else i get the error.
+  
+      console.log('in the bear route');
+    try {
+  
+      let bearValidated = {
+        user: req.user,
+        token: req.token,
+        message: "You're in bear!!!",
+        message1:"()=()   ()-()   ()=()   ()-()",
+        message2:`('Y')   (':')   (^;^)   ('&')`,
+        message3:`q . p   d . b   C   C   c . c`,
+        message4:`()_()   ()_()   ()_()   ()=()`,
+
+      }
+  
+      res.cookie = req.token;
+      res.token = req.token;
+      //send my resp back 
+      res.status(201).json(bearValidated);
+  
+    } catch(err) {
+  
+      res.status(401).send('Try your bear token again');
+      next(err.message);
+      
+    };
+  
+  });
 
 
   oneRouter.get('/users', async function (req, res, next) {
