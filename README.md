@@ -15,10 +15,13 @@ Aditional instruction srequire that we save a nique username, and also hash pasw
 
 now we use a token and break it up using the jwt library, and once decoded we can retrieve the user info from the token.
 
-### UML
+### UML lab 12
 
 
+![UML](https://github.com/401Repo/expressRouter/blob/main/UML.jpg?raw=true)
 
+
+### UML lab 11
 
 
 ![UML](https://github.com/401Repo/expressRouter/blob/main/UML.jpg?raw=true)
