@@ -11,6 +11,10 @@
 //jgs ((__|__))
 
 
+// for basic oauth
+
+const superagent = require('superagent');
+
 //Things i need:
 const express = require('express');
 const User = require('../models/user-models.js');
@@ -159,6 +163,86 @@ oneRouter.get('/secret', bearAuth, async function (req, res, next) {
     };
 
   });
+/////////
+
+
+///Oauth
+
+
+
+///////////
+
+
+oneRouter.get('/oauth', async (req, res, next) => {
+  let code = req.query.code; // oauth gives us a code to make a request for the token
+
+  let tokenURL = 'https://github.com/login/oauth/access_token';
+  let remoteUserURL = 'https://api.github.com/user';
+
+  try {
+
+    // STEP#3 first exchange an access code for an access token
+    const access_token = await exchangeCodeForToken(code);
+
+    // STEP#4 Now that we have the toke, we can use this to get data about the user
+    const userData = await getRemoteUserData(access_token);
+
+    // STEP#5 Using our userData from the AUth Provider, we can create our own User to relate any resources this user creates
+    //  the goal here is to send back a token from this user we created.
+    const token = await createAPIUser(userData);
+
+    res.send(token);
+  } catch (e) {
+    console.log(e);
+
+    res.status(400).send("Something went wrong");
+  }
+
+
+  // confirm that a request was made and get a token for user data
+  async function exchangeCodeForToken(code) {
+    let tokenRequest = await superagent.post(tokenURL)
+      .send({
+        code: code,
+        client_id: process.env.CLIENT_ID,
+        client_secret: process.env.CLIENT_SECRET,
+        redirect_uri: process.env.REDIRECT_URI,
+        grant_type: 'authorization_code'
+      });
+
+    let access_token = tokenRequest.body.access_token;
+
+    return access_token;
+  }
+
+  // use the access_token to request information about the user
+  async function getRemoteUserData(token) {
+    console.log('token from code', token);
+    let userRequest = await superagent.get(remoteUserURL)
+      .set('User-Agent', 'express') // specific to githubs requirement for requesting data
+      .set('Authorization', `token ${token}`);
+
+    let user = userRequest.body;
+
+    return user;
+  }
+
+  // This creates our own user and creates a token
+  async function createAPIUser(userdata) {
+    const newUser = new Users({ username: userdata.login });
+    const savedUser = await newUser.save();
+
+    const token = savedUser.generateToken();
+
+    return token;
+  }
+});
+
+
+
+
+
+
 
 // i need a get route users to get users. This to geet to yesterday.
 
