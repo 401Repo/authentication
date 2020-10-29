@@ -26,16 +26,16 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(loggingMiddleware);
 app.use(timeStamp);
-
+app.use(express.static('./public'));
 // routes
 // only sign in and log in
 const oneRouter = require('./auth/routes/router.js');
 app.use('/api/v1', oneRouter);
 
 // ERROR PAGES
-
 app.use(notFound);
 app.use('*', serverError);
+
 
 function start(PORT){
   app.listen(PORT, () => console.log('Listening on: ', PORT))
