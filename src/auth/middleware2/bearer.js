@@ -54,7 +54,7 @@ console.log('at bear auth');
 
   } catch(err) {
     // console.log(err);
-    next('Testing secret');
+    next('Testing secret, try again');
   };
 
 };

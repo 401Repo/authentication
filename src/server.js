@@ -20,6 +20,7 @@ const serverError = require('./middleware/500s.js');
 const loggingMiddleware = require('./middleware/logger.js');
 const timeStamp = require('./middleware/timeStamp.js');
 
+///
 
 // express specific
 app.use(express.json());
@@ -31,6 +32,9 @@ app.use(express.static('./public'));
 // only sign in and log in
 const oneRouter = require('./auth/routes/router.js');
 app.use('/api/v1', oneRouter);
+function handleGet(req, res, next) {
+  res.send('You are authorized');
+}
 
 // ERROR PAGES
 app.use(notFound);

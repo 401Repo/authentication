@@ -14,6 +14,7 @@
 // for basic oauth
 
 const superagent = require('superagent');
+const ControlList = require('../middleware2/acl.js');
 
 //Things i need:
 const express = require('express');
@@ -39,24 +40,27 @@ oneRouter.post('/signup', async function (req, res, next) {
     let obj = {
       username: req.body.username,
       password: req.body.password,
+      role: req.body.role
     };
 
+
+    console.log('this the req.body: ', req.body)
     // A new instance of the user schema, containing new user sign in data
     let newRecord = await new User(obj);
-    console.log({newRecord}, 'The object');
+    console.log({ newRecord }, 'The object');
 
     // Add the new user to the database
     let newUser = await newRecord.save();
-    console.log({newUser}, 'the new user');
+    console.log({ newUser }, 'the new user');
 
     // Get a new JWT token
     let token = newRecord.getToken();
-    console.log({token}, 'This is the token');
+    console.log({ token }, 'This is the token');
 
     // respond with 201 and send the token back
     res.status(201).send(token);
 
-  } catch(err) {
+  } catch (err) {
 
     console.log('404 error in auth router')
     res.status(401).send('Signup failed, please try again.');
@@ -78,9 +82,9 @@ oneRouter.post('/signup', async function (req, res, next) {
 
 oneRouter.post('/signin', basicAuth, async function (req, res, next) {
 
-// I have to go to basicAuth before landing here else i get the error.
+  // I have to go to basicAuth before landing here else i get the error.
 
-    //console.log('on the sign in route');
+  //console.log('on the sign in route');
   try {
 
     let validated = {
@@ -93,19 +97,19 @@ oneRouter.post('/signin', basicAuth, async function (req, res, next) {
       message4: "    /  |  \\",
       message5: "KCK '-.|.-'"
     }
-    
 
- 
+
+
     res.cookie = req.token;
     res.token = req.token;
     //send my resp back 
     res.status(201).json(validated);
 
-  } catch(err) {
+  } catch (err) {
 
     res.status(401).send('Try your username and password again');
     next(err.message);
-    
+
   };
 
 });
@@ -115,54 +119,250 @@ oneRouter.post('/signin', basicAuth, async function (req, res, next) {
 oneRouter.get('/secret', bearAuth, async function (req, res, next) {
 
   // I have to go to basicAuth before landing here else i get the error.
-  
-      console.log('in the bear route');
-    try {
-  
-      let bearValidated = {
-        user: req.user,
-        token: req.token,
-        message: "You're in bear!!!",
-        message1:"()=()   ()-()   ()=()   ()-()",
-        message2:`('Y')   (':')   (^;^)   ('&')`,
-        message3:`q . p   d . b   C   C   c . c`,
-        message4:`()_()   ()_()   ()_()   ()=()`,
 
-      }
+  console.log('in the bear route');
+  try {
+
+    let bearValidated = {
+      user: req.user,
+      token: req.token,
+      message: "You're in bear!!!",
+      message1: "()=()   ()-()   ()=()   ()-()",
+      message2: `('Y')   (':')   (^;^)   ('&')`,
+      message3: `q . p   d . b   C   C   c . c`,
+      message4: `()_()   ()_()   ()_()   ()=()`,
+
+    }
+
+    res.cookie = req.token;
+    res.token = req.token;
+    //send my resp back 
+    res.status(201).json(bearValidated);
+
+  } catch (err) {
+
+    res.status(401).send('Try your bear token again');
+    next(err.message);
+
+  };
+
+});
+///////////
+
+////////////
+
+//////////bearauth 20. for user roles 
+oneRouter.get('/update', bearAuth, ControlList('update'), async function (req, res, next) {
+
+  // I have to go to bearAuth before landing here else i get the error.
+
+  console.log('in the bear update route');
+  try {
+
+    let oldName = req.query.oldname;
+    let newName = req.query.newname;
+
+    let upUser = await User.update({username: oldName}, {username: newName})
+    let users = await User.find();
+    let bearValidated = {
+      user: req.user.username,
+      role: req.user.role,
+      token: req.token,
+      message: "You're are able to update users in DB!!!",
+      message1: "()=()   ()-()   ()=()   ()-()",
+      message2: `('Y')   (':')   (^;^)   ('&')`,
+      message3: `q . p   d . b   C   C   c . c`,
+      message4: `()_()   ()_()   ()_()   ()=()`,
+
+      users: users
+    }
+
   
-      res.cookie = req.token;
-      res.token = req.token;
-      //send my resp back 
-      res.status(201).json(bearValidated);
-  
-    } catch(err) {
-  
-      res.status(401).send('Try your bear token again');
-      next(err.message);
-      
-    };
-  
-  });
+
+    res.cookie = req.token;
+    res.token = req.token;
+    //send my resp back 
+    res.status(201).json(bearValidated);
 
 
-  oneRouter.get('/users', async function (req, res, next) {
 
-    console.log('in path users');
+  } catch (err) {
 
-    try {
+    res.status(401).send('You cannot use the update route');
+    next(err.message);
+
+  };
+
+});
+
+oneRouter.get('/create', bearAuth, ControlList('create'), async function (req, res, next) {
+
+  // I have to go to bearAuth before landing here else i get the error.
+
+  console.log('in the bear create route');
+  try {
+
+////////
+
+//the req has the username and password sent to sign up with
+let obj = {
+  username: req.query.username,
+  password: req.query.password,
+  role: req.query.role,
+};
+
+
+console.log('this the req.body: ', req.body)
+// A new instance of the user schema, containing new user sign in data
+let newRecord = await new User(obj);
+console.log({ newRecord }, 'The object');
+
+// Add the new user to the database
+let newUser = await newRecord.save();
+console.log({ newUser }, 'the new user');
+
+// Get a new JWT token
+let token = newRecord.getToken();
+console.log({ token }, 'This is the token');
+
+    ///////
+    let users = await User.find();
+    let bearValidated = {
+      user: req.user.username,
+      role: req.user.role,
+      token: req.token,
+      message: "You're a user and can read our users in DB!!!",
+      message1: "()=()   ()-()   ()=()   ()-()",
+      message2: `('Y')   (':')   (^;^)   ('&')`,
+      message3: `q . p   d . b   C   C   c . c`,
+      message4: `()_()   ()_()   ()_()   ()=()`,
+
+      users: users
+    }
+
   
 
-      // just empty find
-      let users = await User.find();
-      res.status(201).json(users);
-    } catch(err) {
-  
-      res.status(500).send('Server error, could not get users');
-      next(err.message);
-  
-    };
+    res.cookie = req.token;
+    res.token = req.token;
+    //send my resp back 
+    res.status(201).json(bearValidated);
 
-  });
+
+
+  } catch (err) {
+
+    res.status(401).send('You cannot use the create route');
+    next(err.message);
+
+  };
+
+});
+
+
+
+oneRouter.get('/read', bearAuth, async function (req, res, next) {
+
+  // I have to go to bearAuth before landing here else i get the error.
+
+
+  console.log('in the bear read route');
+  try {
+
+    let users = await User.find();
+
+    let bearValidated = {
+      mesage0: "You are a reader and can only see whats in our DB:",
+      user: req.user,
+      token: req.token,
+      message: "You're a user and can read our users in DB!!!",
+      message1: "()=()   ()-()   ()=()   ()-()",
+      message2: `('Y')   (':')   (^;^)   ('&')`,
+      message3: `q . p   d . b   C   C   c . c`,
+      message4: `()_()   ()_()   ()_()   ()=()`,
+
+      users: users
+    }
+
+  
+
+    res.cookie = req.token;
+    res.token = req.token;
+    //send my resp back 
+    res.status(201).json(bearValidated);
+
+
+
+  } catch (err) {
+
+    res.status(401).send('You cannot use the read route');
+    next(err.message);
+
+  };
+
+});
+
+oneRouter.get('/delete', bearAuth, ControlList('delete'), async function (req, res, next) {
+
+  // I have to go to bearAuth before landing here else i get the error.
+  let delName = req.query.delname;
+
+  console.log('in the bear read route');
+  try {
+
+    await User.deleteOne({username: delName});
+    let users = await User.find();
+    let bearValidated = {
+      mesage0: "You are an admin and can delete users in our DB:",
+      user: req.user,
+      token: req.token,
+      message: "You're a user bear authorized to our DB records!!!",
+      message1: "()=()   ()-()   ()=()   ()-()",
+      message2: `('Y')   (':')   (^;^)   ('&')`,
+      message3: `q . p   d . b   C   C   c . c`,
+      message4: `()_()   ()_()   ()_()   ()=()`,
+
+      users: users
+    }
+
+  
+
+    res.cookie = req.token;
+    res.token = req.token;
+    //send my resp back 
+    res.status(201).json(bearValidated);
+
+
+
+  } catch (err) {
+
+    res.status(401).send('You cannot use the read route');
+    next(err.message);
+
+  };
+
+});
+
+
+
+
+oneRouter.get('/users', async function (req, res, next) {
+
+  console.log('in path users');
+
+  try {
+
+
+    // just empty find
+    let users = await User.find();
+    res.status(201).json(users);
+  } catch (err) {
+
+    res.status(500).send('Server error, could not get users');
+    next(err.message);
+
+  };
+
+});
 /////////
 
 
