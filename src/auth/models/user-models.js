@@ -21,7 +21,18 @@ const bcrypt = require('bcrypt');
 const users = new mongoose.Schema({
   username: { type: String, required: true, unique : true },
   password: { type: String, required: true },
+  role: { type: String, required: true, enum: ['user', 'admin', 'editor', 'user'] }
 });
+///
+
+// Map of roles to capabilites, assigned to our token that we give the client
+const capabilities = {
+  admin: ['read', 'create', 'update', 'delete'],
+  writer: ['read', 'create'],
+  editor: ['read', 'update'],
+  user: ['read'],
+}
+
 
 // else we dont change the pass string
 users.pre('save', async function () {
@@ -30,7 +41,7 @@ users.pre('save', async function () {
 });
 
 users.methods.getToken = function () {
-  let token = jwt.sign({ username: this.username }, process.env.MYCODE);
+  let token = jwt.sign({ username: this.username, capabilities:capabilities[this.role] }, process.env.MYCODE);
   return token;
 };
 
