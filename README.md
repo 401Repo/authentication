@@ -10,6 +10,14 @@ We make use of base-64, jsonwebtoken, bcrypt, mongoose and our files to make sur
 
 Aditional instruction srequire that we save a nique username, and also hash paswords.
 
+### Lab 13 update: 
+
+We now have defined roles for the users: an admin can create and update or delete, a user can only read, and an edito can read or update.
+
+### UML lab 13
+
+![uml](https://github.com/401Repo/authentication/blob/main/Image%20from%20iOS%20(3).jpg)
+
 
 ### Lab 12 update: 
 
